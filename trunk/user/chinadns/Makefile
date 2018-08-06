@@ -1,36 +1,13 @@
-SRC_NAME=chinadns-1.3.2
 THISDIR = $(shell pwd)
+#$(ROMFSINST) -p +x $(THISDIR)/chinadns /usr/bin/chinadns
 
-all: config_test
-	chmod -R +x scripts/
-	$(MAKE) -C $(SRC_NAME)
-
-config_test:
-	( if [ -f ./config_done ]; then \
-		echo "the same configuration"; \
-	else \
-		make configure && touch config_done; \
-	fi )
-
-configure:
-	( cd $(SRC_NAME) ; \
-	cmake \
-	-DCMAKE_INSTALL_PREFIX=$(STAGEDIR) \
-	-DCMAKE_TOOLCHAIN_FILE=../cross-mipsel-linux.cmake \
-	. \
-	)
+all:
 
 clean:
-	if [ -f $(SRC_NAME)/Makefile ] ; then \
-		$(MAKE) -C $(SRC_NAME) clean ; \
-	fi ; \
-	rm -f $(SRC_NAME)/cmake_install.cmake
-	rm -rf $(SRC_NAME)/CMakeFiles
-	rm -f $(SRC_NAME)/Makefile
-	rm -f $(SRC_NAME)/CMakeCache.txt
-	rm -f config_done
 
 romfs:
-	chmod -R +x ./scripts
+	chmod -R +x ./scripts chinadns
 	$(ROMFSINST) $(THISDIR)/scripts /usr/bin/
-	$(ROMFSINST) -p +x $(THISDIR)/$(SRC_NAME)/chinadns /usr/bin/chinadns
+	cp ./chinadns /opt/rt-n56u/trunk/romfs/usr/bin/chinadns
+	$(ROMFSINST) $(THISDIR)/chinadns_iplist.txt /etc/storage/chinadns/chinadns_iplist.txt
+	$(ROMFSINST) $(THISDIR)/chinadns_chnroute.txt /etc/storage/chinadns/chinadns_chnroute.txt

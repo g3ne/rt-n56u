@@ -12,6 +12,8 @@ wget -O- 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' | \
 [ ! -d /etc/storage/chinadns/ ] && mkdir /etc/storage/chinadns/
 mv -f /tmp/chinadns_chnroute.txt /etc/storage/chinadns/chnroute.txt
 
+wget 'https://raw.githubusercontent.com/shadowsocks/ChinaDNS/master/iplist.txt' -O /etc/storage/chinadns/chinadns_iplist.txt
+
 mtd_storage.sh save >/dev/null 2>&1
 
 [ -f /usr/bin/chinadns.sh ] && [ "$(nvram get chinadns_enable)" = "1" ] && /usr/bin/chinadns.sh restart >/dev/null 2>&1
