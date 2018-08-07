@@ -3,7 +3,8 @@
 result=0
 mtd_part_name="Storage"
 mtd_part_dev="/dev/mtdblock5"
-mtd_part_size=65536
+#mtd_part_size=65536
+mtd_part_size=200000
 dir_storage="/etc/storage"
 slk="/tmp/.storage_locked"
 tmp="/tmp/storage.tar"
@@ -101,6 +102,7 @@ func_save()
 		result=1
 		echo "Error! Invalid storage final data size: $fsz"
 		logger -t "Storage save" "Invalid storage final data size: $fsz"
+		[ $fsz -gt $mtd_part_size ] && logger -t "Storage save" "Storage using data size: $fsz > flash partition size: $mtd_part_size"
 	fi
 	rm -f $tmp
 	rm -f $tbz

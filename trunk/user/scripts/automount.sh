@@ -1,5 +1,5 @@
 #!/bin/sh
-
+logger -t "automount" "/sbin/automount.sh $1    $2"
 func_load_module()
 {
 	module_name=$1
@@ -49,14 +49,17 @@ if [ -z "$dev_label" ] ; then
 else
 	dev_mount="/media/$dev_label"
 fi
-
+logger -t "automount" "mount  device $dev_full ($ID_FS_TYPE) to $dev_mount @@@@@ $mnt_legacy"
 # if mounted, try to umount
 if mountpoint -q "$dev_mount" ; then
+	losetup -d `losetup -a | grep "$dev_mount" | grep o_p_t.img | awk -F ':' '{print $1}'`
 	if ! umount -f "$dev_mount" ; then
 		dev_mount="$mnt_legacy"
 		if mountpoint -q "$dev_mount" ; then
+			losetup -d `losetup -a | grep "$dev_mount" | grep o_p_t.img | awk -F ':' '{print $1}'`
 			if ! umount -f "$dev_mount" ; then
 				logger -t "automount" "Unable to prepare mountpoint $dev_mount!"
+				[ ! -z "$(losetup -a | grep "$dev_mount" | grep o_p_t.img | awk -F ':' '{print $1}')" ] && reboot
 				exit 1
 			fi
 		fi
@@ -77,7 +80,7 @@ if [ "$ID_FS_TYPE" == "msdos" -o "$ID_FS_TYPE" == "vfat" ] ; then
 	kernel_vfat=`modprobe -l | grep vfat`
 	if [ -n "$kernel_vfat" ] ; then
 		func_load_module vfat
-		mount -t vfat "$dev_full" "$dev_mount" -o noatime,umask=0,iocharset=utf8,codepage=866,shortname=winnt
+		mount -t vfat "$dev_full" "$dev_mount" -o noatime,umask=0,iocharset=utf8,codepage=936,shortname=winnt
 	else
 		func_load_module exfat
 		mount -t exfat "$dev_full" "$dev_mount" -o noatime,umask=0,iocharset=utf8
@@ -152,6 +155,6 @@ if [ -x /sbin/test_share ] ; then
 fi
 
 # call optware script
-/usr/bin/opt-mount.sh "$dev_full" "$dev_mount"
+/usr/bin/opt-mount.sh "$dev_full" "$dev_mount" &
 
 exit 0

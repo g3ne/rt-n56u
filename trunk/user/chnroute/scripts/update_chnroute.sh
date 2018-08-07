@@ -1,8 +1,8 @@
 #!/bin/sh
 
-set -e -o pipefail
+#set -e -o pipefail
 
-[ "$1" != "force" ] && [ "$(nvram get ss_update_chnroute)" != "1" ] && exit 0
+#[ "$1" != "force" ] && [ "$(nvram get ss_update_chnroute)" != "1" ] && exit 0
 
 rm -f /tmp/chinadns_chnroute.txt
 wget -O- 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' | \
@@ -16,7 +16,7 @@ wget 'https://raw.githubusercontent.com/shadowsocks/ChinaDNS/master/iplist.txt' 
 
 mtd_storage.sh save >/dev/null 2>&1
 
-[ -f /usr/bin/chinadns.sh ] && [ "$(nvram get chinadns_enable)" = "1" ] && /usr/bin/chinadns.sh restart >/dev/null 2>&1
-[ -f /usr/bin/shadowsocks.sh ] && [ "$(nvram get ss_enable)" = "1" ] && /usr/bin/shadowsocks.sh restart >/dev/null 2>&1
+#[ -f /usr/bin/chinadns.sh ] && [ "$(nvram get chinadns_enable)" = "1" ] && /usr/bin/chinadns.sh restart >/dev/null 2>&1
+#[ -f /usr/bin/shadowsocks.sh ] && [ "$(nvram get ss_enable)" = "1" ] && /usr/bin/shadowsocks.sh restart >/dev/null 2>&1
 
 logger -st "chnroute" "Update done"
