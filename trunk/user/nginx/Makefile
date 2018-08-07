@@ -8,6 +8,8 @@
 #$(ROMFSINST) -p +x /opt/rt-n56u/trunk/user/nginx/nginx /usr/bin/nginx
 #$(ROMFSINST) -p +x $(THISDIR)/nginx /usr/bin/nginx
 #
+#cp libgcc_s.so.1 /opt/rt-n56u/trunk/romfs/usr/lib/libgcc_s.so.1
+#
 THISDIR = $(shell pwd)
 
 all:
