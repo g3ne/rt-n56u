@@ -6,6 +6,7 @@
 #tar -xzf ./nginx.tgz -C /usr/bin/
 #
 #$(ROMFSINST) -p +x /opt/rt-n56u/trunk/user/nginx/nginx /usr/bin/nginx
+#$(ROMFSINST) -p +x $(THISDIR)/nginx /usr/bin/nginx
 #
 THISDIR = $(shell pwd)
 
@@ -17,4 +18,3 @@ romfs:
 	chmod 777 nginx
 	cp nginx /opt/rt-n56u/trunk/romfs/usr/bin/nginx
 	$(ROMFSINST) ./nginx.conf /usr/bin/nginx.conf
-	$(ROMFSINST) ./ld.so.conf /etc_ro/ld.so.conf
