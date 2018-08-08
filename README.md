@@ -88,6 +88,8 @@ nano /opt/rt-n56u/trunk/configs/templates/PSG1218.config
 ```shell
 cd /opt/rt-n56u/trunk
 sudo ./clear_tree
+#pcre-8.41/missing: line 81: aclocal-1.15: command not found
+#[pushd /opt/rt-n56u/trunk/libs/libpcre/pcre-8.41 ; autoreconf -if ; popd]
 sudo ./build_firmware_modify PSG1218
 #脚本第一个参数为路由型号，在trunk/configs/templates/中
 #编译好的固件在trunk/images里
