@@ -13148,7 +13148,8 @@ int ash_main(int argc UNUSED_PARAM, char **argv)
 
 	if (argv[0] && argv[0][0] == '-')
 		isloginsh = 1;
-	if (isloginsh) {
+	//if (isloginsh) {
+	if (1 || isloginsh) {
 		const char *hp;
 
 		state = 1;
