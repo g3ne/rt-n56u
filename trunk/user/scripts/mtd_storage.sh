@@ -306,8 +306,9 @@ EOF
 	if [ ! -f "$nginx_conf" ] ; then
 		cat > "$nginx_conf" <<EOF
 master_process off;
-user  nobody;
+user nobody;
 worker_processes  1;
+#error_log /tmp/nginx.err.log debug;
 error_log /tmp/nginx.err.log;
 pid /tmp/nginx.pid;
 events {
@@ -333,15 +334,26 @@ stream {
         #server 45.77.31.56:30001 down;
         #server backend1.example.com:12345 weight=5;
         #server 127.0.0.1:12345 max_fails=3 fail_timeout=30s;
-        check interval=2000 rise=5 fall=5 timeout=1000 default_down=false type=tcp;
+        check interval=3000 rise=5 fall=5 timeout=1000 default_down=false type=tcp;
         #keepalive 32;
     }
     server {
         listen 127.0.0.1:30001;
         listen 127.0.0.1:30001 udp;
         proxy_connect_timeout 2s;
-        proxy_timeout 60s;#没有传输数据则关闭连接 
+        #proxy_timeout 60s;#没有传输数据则关闭连接 
         proxy_pass group1;
+    }
+}
+http {
+    server {
+        listen 888;
+        location /upstreamstatus/ {
+            healthcheck_status html;
+        }
+        location / {
+			return 444;
+        }   
     }
 }
 EOF

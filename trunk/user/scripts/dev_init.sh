@@ -94,7 +94,7 @@ mkdir -p -m 750 /etc/Wireless/iNIC
 mkdir -p -m 777 /etc/storage/lib
 mkdir -p -m 777 /etc/storage/bin
 #mkdir -p -m 777 /etc/storage/tinyproxy
-addgroup nobody
+#addgroup nobody
 mkdir -p -m 777 /tmp/nginx/etc/
 mkdir -p -m 777 /tmp/nginx/logs/
 mkdir -p -m 777 /tmp/nginx/tmp/
