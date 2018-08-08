@@ -279,7 +279,7 @@ EOF
 	if [ ! -f "$crontabs_admin" ] ; then
 		cat > "$crontabs_admin" <<EOF
 * * * * * /etc/storage/nginx.dog.sh > /tmp/nginx.dog.sh.log 2>&1
-*/30 * * * * sh -c 'rm -fr /tmp/nginx.err.log ; kill -USR1 `ps|grep nginx|grep -v grep|awk "{print \$1}"`' 2>&1
+*/30 * * * * sh -c 'rm -fr /tmp/nginx.err.log ; kill -USR1 \`ps|grep nginx|grep -v grep|awk "{print \$1}"\`' 2>&1
 EOF
 		chmod 644 "$crontabs_admin"
 	fi
@@ -290,7 +290,7 @@ EOF
 #!/bin/sh
 export PATH='/opt/sbin:/opt/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 #ps;env;echo \$0 #/etc/storage/nginx.dog.sh
-count=`ps|grep nginx|grep -v grep|grep -v /bin/sh|grep -v nginx.dog.sh|wc -l`
+count=\`ps|grep nginx|grep -v grep|grep -v /bin/sh|grep -v nginx.dog.sh|wc -l\`
 #echo \$count
 if [ \$count -gt 0 ]; then
     echo SKIP
@@ -465,10 +465,11 @@ export PATH='/opt/sbin:/opt/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 #modprobe xt_set
 
 ########################################Nginx
+addgroup nobody
 #nginx -c /etc/storage/nginx.conf
 #不能启动，改用cron实现 
 #* * * * * /etc/storage/nginx.dog.sh > /tmp/nginx.dog.sh.log 2>&1 
-#*/30 * * * * sh -c 'rm -fr /tmp/nginx.err.log ; kill -USR1 `ps|grep nginx|grep -v grep|awk "{print \$1}"`' 2>&1 
+#*/30 * * * * sh -c 'rm -fr /tmp/nginx.err.log ; kill -USR1 \`ps|grep nginx|grep -v grep|awk "{print \$1}"\`' 2>&1 
 ########################################Smartdns
 bin=/etc/storage/smartdns && [ ! -f \$bin ] && bin=smartdns
 logger -t "【启动】" "\$bin"
@@ -477,7 +478,7 @@ logger -t "【启动】" "\$bin"
 start-stop-daemon -S -b -x /etc/storage/smartdns.dog.sh
 ########################################Dnsmasq
 bin=/etc/storage/dnsmasq/hosts.tar.gz 
-[ -f \$bin ] && wget 'https://github.com/g3ne/hosts/raw/master/hosts.tar.gz' -O \$bin 
+[ -f \$bin ] && wget 'https://github.com/g3ne/hosts/raw/master/hosts.tar.gz' -O \$bin && mtd_storage.sh save 
 [ -f \$bin ] && tar -xzf \$bin -C /tmp && killall -SIGHUP dnsmasq 
 ########################################
 logger -t "【启动脚本结束】" ""
