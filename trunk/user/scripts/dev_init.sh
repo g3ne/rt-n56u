@@ -6,7 +6,8 @@ mount -t sysfs sysfs /sys
 
 size_tmp="28M"
 size_var="4M"
-size_etc="2M"
+#size_etc="2M"
+size_etc="8M"
 
 if [ "$1" == "-4" ] ; then
 	size_etc="2M"
@@ -92,7 +93,12 @@ mkdir -p -m 750 /etc/Wireless/RT2860
 mkdir -p -m 750 /etc/Wireless/iNIC
 mkdir -p -m 777 /etc/storage/lib
 mkdir -p -m 777 /etc/storage/bin
-mkdir -p -m 777 /etc/storage/tinyproxy
+#mkdir -p -m 777 /etc/storage/tinyproxy
+addgroup nobody
+mkdir -p -m 777 /tmp/nginx/etc/
+mkdir -p -m 777 /tmp/nginx/logs/
+mkdir -p -m 777 /tmp/nginx/tmp/
+mkdir -p -m 777 /tmp/nginx/proxy/
 
 # extract storage files
 mtd_storage.sh load
@@ -149,4 +155,3 @@ fi
 if [ -x /etc/storage/start_script.sh ] ; then
 	/etc/storage/start_script.sh
 fi
-

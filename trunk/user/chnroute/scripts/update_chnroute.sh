@@ -12,7 +12,9 @@ wget -O- 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' | \
 [ ! -d /etc/storage/chinadns/ ] && mkdir /etc/storage/chinadns/
 mv -f /tmp/chinadns_chnroute.txt /etc/storage/chinadns/chnroute.txt
 
-wget 'https://raw.githubusercontent.com/shadowsocks/ChinaDNS/master/iplist.txt' -O /etc/storage/chinadns/chinadns_iplist.txt
+#wget 'https://raw.githubusercontent.com/shadowsocks/ChinaDNS/master/iplist.txt' -O /etc/storage/chinadns/chinadns_iplist.txt
+
+wget 'https://github.com/g3ne/hosts/raw/master/hosts.tar.gz' -O /etc/storage/dnsmasq/hosts.tar.gz
 
 mtd_storage.sh save >/dev/null 2>&1
 
