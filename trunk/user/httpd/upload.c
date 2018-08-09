@@ -101,7 +101,7 @@ check_header_image(const char *buf, long *file_len)
 
 	if (strcmp(pid_asus, BOARD_PID) != 0) {
 		httpd_log("%s: Incorrect image ProductID: %s! Expected is %s.", "Firmware update", pid_asus, BOARD_PID);
-		return -2;
+		//return -2;
 	}
 
 	*file_len = (long)(ntohl(hdr->ih_size) + sizeof(image_header_t));

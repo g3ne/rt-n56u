@@ -1,7 +1,7 @@
 /* Lenovo NEWIFI-MINI */
 
 #define BOARD_PID		"NEWIFI-MINI"
-#define BOARD_NAME		"NEWIFI-MINI"
+#define BOARD_NAME		"WIFI"
 #define BOARD_DESC		"-"
 #define BOARD_VENDOR_NAME	"-"
 #define BOARD_VENDOR_URL	"-"

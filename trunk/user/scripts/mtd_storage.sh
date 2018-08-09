@@ -260,7 +260,6 @@ while true; do
     result=\${cpu/.*}
     if [[ \$record == \$pid ]]; then 
         kill -9 \$pid
-        sleep 1
         bin=/etc/storage/smartdns && [ ! -s \$bin ] && bin=smartdns
         \$bin -p /tmp/smartdns.pid -c /etc/storage/smartdns.conf
         logger -t "【重启smartdns】" "pid:\$pid, cpu:\$cpu"
@@ -278,26 +277,48 @@ EOF
 	crontabs_admin="$dir_storage/cron/crontabs/admin"
 	if [ ! -f "$crontabs_admin" ] ; then
 		cat > "$crontabs_admin" <<EOF
-* * * * * /etc/storage/nginx.dog.sh > /tmp/nginx.dog.sh.log 2>&1
+* * * * * /etc/storage/dog.sh > /tmp/dog.sh.log 2>&1
 */30 * * * * sh -c 'rm -fr /tmp/nginx.err.log ; kill -USR1 \`ps|grep nginx|grep -v grep|awk "{print \$1}"\`' 2>&1
 EOF
 		chmod 644 "$crontabs_admin"
 	fi
 	#######################################
-	nginx_dog_sh="$dir_storage/nginx.dog.sh"
+	nginx_dog_sh="$dir_storage/dog.sh"
 	if [ ! -f "$nginx_dog_sh" ] ; then
 		cat > "$nginx_dog_sh" <<EOF
 #!/bin/sh
 export PATH='/opt/sbin:/opt/bin:/usr/sbin:/usr/bin:/sbin:/bin'
-#ps;env;echo \$0 #/etc/storage/nginx.dog.sh
-count=\`ps|grep nginx|grep -v grep|grep -v /bin/sh|grep -v nginx.dog.sh|wc -l\`
-#echo \$count
+#ps;env;echo \$0 #/etc/storage/dog.sh
+#################### nginx
+count=\`ps|grep nginx|grep -v grep|grep -v /bin/sh|grep -v dog.sh|wc -l\`
 if [ \$count -gt 0 ]; then
-    echo SKIP
+    echo NGINX_SKIP
 else
-    logger -t "【启动nginx】" "..." 
-    nginx -c /etc/storage/nginx.conf 
+	sleep 2
+	count=\`ps|grep nginx|grep -v grep|grep -v /bin/sh|grep -v dog.sh|wc -l\`
+	if [ \$count -gt 0 ]; then
+		echo NGINX_SKIP
+	else
+		logger -t "【启动nginx】" "..." 
+		nginx -c /etc/storage/nginx.conf 
+	fi
 fi
+#################### smartdns
+count=\`ps|grep smartdns|grep -v smartdns|grep -v /bin/sh|grep -v dog.sh|wc -l\`
+if [ \$count -gt 0 ]; then
+    echo SMARTDNS_SKIP
+else
+	sleep 2
+	count=\`ps|grep smartdns|grep -v smartdns|grep -v /bin/sh|grep -v dog.sh|wc -l\`
+	if [ \$count -gt 0 ]; then
+		echo SMARTDNS_SKIP
+	else
+		logger -t "【启动smartdns】" "..." 
+        bin=/etc/storage/smartdns && [ ! -s \$bin ] && bin=smartdns
+        \$bin -p /tmp/smartdns.pid -c /etc/storage/smartdns.conf
+	fi
+fi
+####################
 EOF
 		chmod 755 "$nginx_dog_sh"
 	fi
@@ -480,17 +501,17 @@ export PATH='/opt/sbin:/opt/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 addgroup nobody
 #nginx -c /etc/storage/nginx.conf
 #不能启动，改用cron实现 
-#* * * * * /etc/storage/nginx.dog.sh > /tmp/nginx.dog.sh.log 2>&1 
+#* * * * * /etc/storage/dog.sh > /tmp/dog.sh.log 2>&1 
 #*/30 * * * * sh -c 'rm -fr /tmp/nginx.err.log ; kill -USR1 \`ps|grep nginx|grep -v grep|awk "{print \$1}"\`' 2>&1 
 ########################################Smartdns
 bin=/etc/storage/smartdns && [ ! -f \$bin ] && bin=smartdns
 logger -t "【启动】" "\$bin"
-\$bin -p /tmp/smartdns.pid -c /etc/storage/smartdns.conf
+start-stop-daemon -S -b -x \$bin -- -p /tmp/smartdns.pid -c /etc/storage/smartdns.conf
 #监控cpu占用重启 
 start-stop-daemon -S -b -x /etc/storage/smartdns.dog.sh
 ########################################Dnsmasq
 bin=/etc/storage/dnsmasq/hosts.tar.gz 
-[ -f \$bin ] && wget 'https://github.com/g3ne/hosts/raw/master/hosts.tar.gz' -O \$bin && mtd_storage.sh save 
+[ -f \$bin ] && wget 'https://github.com/g3ne/hosts/raw/master/hosts.tar.gz' -O \$bin && mtd_storage.sh save && sleep 5 
 [ -f \$bin ] && tar -xzf \$bin -C /tmp && killall -SIGHUP dnsmasq 
 ########################################
 logger -t "【启动脚本结束】" ""
